@@ -9,7 +9,7 @@ pipeline {
         // Checkout To The Service Branch
         stage('Checkout To Mcroservice Branch'){
             steps{
-                git branch: 'app-database', url: 'https://github.com/awanmbandi/realworld-microservice-project.git'
+                git branch: 'app-database', url: 'https://github.com/marcusb2006/realworld-microservice-project.git'
             }
         }
         // Deploy to The Staging/Test Environment
@@ -44,7 +44,7 @@ pipeline {
     post {
     always {
         echo 'Slack Notifications.'
-        slackSend channel: '#general', //update and provide your channel name
+        slackSend channel: '#baam--multi-microservices-alerts', //update and provide your channel name
         color: COLOR_MAP[currentBuild.currentResult],
         message: "*${currentBuild.currentResult}:* Job Name '${env.JOB_NAME}' build ${env.BUILD_NUMBER} \n Build Timestamp: ${env.BUILD_TIMESTAMP} \n Project Workspace: ${env.WORKSPACE} \n More info at: ${env.BUILD_URL}"
     }
