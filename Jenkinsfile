@@ -41,7 +41,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker build -t awanmbandi/frontendservice:latest ."
+                        sh "docker build -t marcusb2006/frontendservice:latest ."
                     }
                 }
             }
@@ -49,7 +49,7 @@ pipeline {
         // Execute SCA/Dependency Test on Service Docker Image
         stage('Snyk SCA Test | Dependencies') {
             steps {
-                sh "${SNYK_HOME}/snyk-linux test --docker awanmbandi/frontendservice:latest || true" 
+                sh "${SNYK_HOME}/snyk-linux test --docker marcusb2006/frontendservice:latest || true" 
             }
         }
         // Push Service Image to DockerHub
@@ -57,7 +57,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker push awanmbandi/frontendservice:latest "
+                        sh "docker push marcusb2006/frontendservice:latest "
                     }
                 }
             }
@@ -73,16 +73,16 @@ pipeline {
                 }
             }
         }
-        // // Perform DAST Test on Application
-        // stage('ZAP Dynamic Testing | DAST') {
-        //     steps {
-        //         sshagent(['OWASP-Zap-Credential']) {
-        //             sh 'ssh -o StrictHostKeyChecking=no ubuntu@13.59.158.38 "docker run -t zaproxy/zap-weekly zap-baseline.py -t http://18.216.48.123:30000/" || true'
-        //                                                 //JENKINS_PUBLIC_IP                                                  //EKS_WORKER_NODE_IP_ADDRESS:30000
-        //         }
-        //     }
-        // }
-        // // Production Deployment Approval
+        // Perform DAST Test on Application
+        stage('ZAP Dynamic Testing | DAST') {
+            steps {
+                sshagent(['OWASP-Zap-Credential']) {
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@3.17.183.19 "docker run -t zaproxy/zap-weekly zap-baseline.py -t http://3.144.43.219:30000/" || true'
+                                                        //JENKINS_PUBLIC_IP                                                  //EKS_WORKER_NODE_IP_ADDRESS:30000
+                }
+            }
+        }
+        // Production Deployment Approval
         // stage('Approve Prod Deployment') {
         //     steps {
         //             input('Do you want to proceed?')
@@ -103,7 +103,7 @@ pipeline {
     post {
     always {
         echo 'Slack Notifications.'
-        slackSend channel: '#general', //update and provide your channel name
+        slackSend channel: '#baam--multi-microservices-alerts', //update and provide your channel name
         color: COLOR_MAP[currentBuild.currentResult],
         message: "*${currentBuild.currentResult}:* Job Name '${env.JOB_NAME}' build ${env.BUILD_NUMBER} \n Build Timestamp: ${env.BUILD_TIMESTAMP} \n Project Workspace: ${env.WORKSPACE} \n More info at: ${env.BUILD_URL}"
     }
