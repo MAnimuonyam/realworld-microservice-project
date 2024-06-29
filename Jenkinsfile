@@ -41,7 +41,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker build -t awanmbandi/paymentservice:latest ."
+                        sh "docker build -t marcusb2006/paymentservice:latest ."
                     }
                 }
             }
@@ -49,7 +49,7 @@ pipeline {
         // Execute SCA/Dependency Test on Service Docker Image
         stage('Snyk SCA Test | Dependencies') {
             steps {
-                sh "${SNYK_HOME}/snyk-linux test --docker awanmbandi/paymentservice:latest || true" 
+                sh "${SNYK_HOME}/snyk-linux test --docker marcusb2006/paymentservice:latest || true" 
             }
         }
         // Push Service Image to DockerHub
@@ -57,7 +57,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker push awanmbandi/paymentservice:latest "
+                        sh "docker push marcusb2006/paymentservice:latest "
                     }
                 }
             }
@@ -94,7 +94,7 @@ pipeline {
     post {
     always {
         echo 'Slack Notifications.'
-        slackSend channel: '#general', //update and provide your channel name
+        slackSend channel: '#baam--multi-microservices-alerts', //update and provide your channel name
         color: COLOR_MAP[currentBuild.currentResult],
         message: "*${currentBuild.currentResult}:* Job Name '${env.JOB_NAME}' build ${env.BUILD_NUMBER} \n Build Timestamp: ${env.BUILD_TIMESTAMP} \n Project Workspace: ${env.WORKSPACE} \n More info at: ${env.BUILD_URL}"
     }
