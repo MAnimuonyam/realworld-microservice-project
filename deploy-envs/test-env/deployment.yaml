@@ -16,7 +16,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: awanmbandi/checkoutservice:latest  # Update it to yours (just the username mostly)
+          image: marcusb2006/checkoutservice:latest  # Update it to yours (just the username mostly)
           ports:
           - containerPort: 5050
           readinessProbe:
